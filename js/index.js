@@ -19,29 +19,75 @@
       5. Add a countdown timer - when the time is up, end the quiz, display the score and highlight the correct answers
 *************************** */
 
+
+let correctAnswers = 0;
+let remainingSeconds = 10;
+
+
+//updates time in the timer
+function updateTime(){
+  const minutes = Math.floor(remainingSeconds / 60);
+  const seconds = remainingSeconds % 60;
+  document.getElementById('timeMinutes').innerHTML = minutes.toString().padStart(2,"0");
+  document.getElementById('timeSeconds').innerHTML = seconds.toString().padStart(2,"0");
+}
+
+//performs the timer function
+function startTimer(){
+if(remainingSeconds===0) return;
+const interval = setInterval(() => {
+  remainingSeconds--;
+  updateTime();
+  if(remainingSeconds===0){
+    clearInterval(interval);
+    //Displays the default time up messages
+    const displayScore = document.querySelector('#score');
+    displayScore.innerHTML = "Score: " + correctAnswers + " correct answers..";
+    const submitQuiz = document.querySelector('#btnSubmit');
+    submitQuiz.style.display = 'none';
+  }
+}, 1000)
+}
+
+//Listens for the start button
 window.addEventListener('DOMContentLoaded', () => {
   const start = document.querySelector('#start');
   start.addEventListener('click', function (e) {
     document.querySelector('#quizBlock').style.display = 'block';
     start.style.display = 'none';
+    //starts the timer
+    updateTime();
+    startTimer();
   });
+
+
   // quizArray QUESTIONS & ANSWERS
   // q = QUESTION, o = OPTIONS, a = CORRECT ANSWER
   // Basic ideas from https://code-boxx.com/simple-javascript-quiz/
   const quizArray = [
     {
-      q: 'Which is the third planet from the sun?',
+      q: '1. Which is the third planet from the sun?',
       o: ['Saturn', 'Earth', 'Pluto', 'Mars'],
       a: 1, // array index 1 - so Earth is the correct answer here
     },
     {
-      q: 'Which is the largest ocean on Earth?',
+      q: '2. Which is the largest ocean on Earth?',
       o: ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
       a: 3,
     },
     {
-      q: 'What is the capital of Australia',
+      q: '3. What is the capital of Australia?',
       o: ['Sydney', 'Canberra', 'Melbourne', 'Perth'],
+      a: 1,
+    },
+    {
+      q: '4. How many planets are there in our solar system?',
+      o: ['Eight', 'Nine', 'Ten', 'Eleven'],
+      a: 0,
+    },
+    {
+      q: '5. How long does it take for light from the Sun to reach Earth?',
+      o: ['1 minute', '8 minutes', 'Instantaneous', '24 hours'],
       a: 1,
     },
   ];
@@ -71,20 +117,50 @@ window.addEventListener('DOMContentLoaded', () => {
         //highlight the li if it is the correct answer
         let li = `li_${index}_${i}`;
         let r = `radio_${index}_${i}`;
+        
         liElement = document.querySelector('#' + li);
         radioElement = document.querySelector('#' + r);
-
+       
         if (quizItem.a == i) {
           //change background color of li element here
+         document.getElementById(`li_${index}_${i}`).style.backgroundColor="green";
         }
 
         if (radioElement.checked) {
           // code for task 1 goes here
+
+          if (quizItem.a == i) {
+            correctAnswers++;
+            return;
+          }      
         }
+
+        
       }
     });
   };
 
   // call the displayQuiz function
   displayQuiz();
+
+//Listens for the submit button
+const submitQuiz = document.querySelector('#btnSubmit');
+submitQuiz.addEventListener('click', (event)=>{
+  calculateScore();
+  const displayScore = document.querySelector('#score');
+  displayScore.innerHTML="Score: "+ correctAnswers + " correct answers..";
+  submitQuiz.style.display='none';
+
+} )
+
+
+
+//listens for the reset button
+const resetQuiz = document.querySelector('#btnReset');
+resetQuiz.addEventListener('click', (event)=>{
+  window.location.reload();
+
+} )
+
+
 });
