@@ -21,7 +21,7 @@
 
 
 let correctAnswers = 0;
-let remainingSeconds = 10;
+let remainingSeconds = 60;
 
 
 //updates time in the timer
